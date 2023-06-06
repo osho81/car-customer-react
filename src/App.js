@@ -23,7 +23,10 @@ function App() {
         <Routes>
 
           <Route path="/" element={< WelcomeComponent />}></Route>
-          <Route path="/allcars" element={< ListAllCarsComponent />}></Route>
+
+          {/* No type send in props, i.e. will get all cars: */}
+          {/* <Route path="/allcars" element={< ListAllCarsComponent type={null} />}></Route> */}
+          <Route path="/allcars" element={< ListAllCarsComponent type="sedan" />}></Route>
           
 
         </Routes>

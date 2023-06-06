@@ -2,24 +2,46 @@ import React, { useEffect, useState } from 'react';
 // import BusImg from '/public/images/bus.jpg';
 import CarService from '../services/CarService';
 
+// In this component, all cars or cars by a specific type can be rendered
+// In car-admin-react, these tasks were done in separate functions
+
+
 function ListAllCarsComponent(props) {
 
 
-    const [allCars, setAllCars] = useState([]);
+    const [carsList, setCarsList] = useState([]);
 
     useEffect(() => {
 
-        const getAllCarsList = () => {
-            CarService.getAllCars().then((response) => {
-                // console.log(response.data);
-                setAllCars(response.data);
+        // Function that functions for All Cars only
+        // const getCarsListList = () => {
+        //     CarService.getCarsList().then((response) => {
+        //         // console.log(response.data);
+        //         setCarsList(response.data);
+        //     }).catch(error => {
+        //         console.log(error);
+        //     })
+        // }
+
+        // Functions that works for all Cars and Cars By Type
+        const getCarsListList = () => {
+            CarService.getCarsList().then((response) => {
+                // If no type is specified in props, get all
+                if (props.type === null) { 
+                    setCarsList(response.data);
+                } else { // Else if specified type in props, get all cars of that type
+                    response.data.map((car) => {
+                        if (car.type === props.type.toString().toUpperCase()) {
+                            setCarsList(prev => [...prev, car]);
+                        }
+                    })
+                }
             }).catch(error => {
                 console.log(error);
             })
         }
-        console.log("I am in useEffect");
 
-        getAllCarsList();
+        getCarsListList();
 
 
     }, [props])
@@ -44,7 +66,7 @@ function ListAllCarsComponent(props) {
 
                     <tbody>
                         {/* fill this part dynamically with car list, one car object per table row: */}
-                        {allCars.map((car) => {
+                        {carsList.map((car) => {
                             return (
                                 <tr key={car.id}>
                                     <td className='min-w-[6rem] max-w-[8rem] whitespace-normal'>
