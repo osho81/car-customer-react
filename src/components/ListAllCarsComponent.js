@@ -1,7 +1,27 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 // import BusImg from '/public/images/bus.jpg';
+import CarService from '../services/CarService';
 
 function ListAllCarsComponent(props) {
+
+
+    useEffect(() => {
+
+        const getAllCarsList = () => {
+            CarService.getAllCars().then((response) => {
+                console.log(response.data);
+            }).catch(error => {
+                console.log(error);
+            })
+        }
+        console.log("I am in useEffect");
+
+        getAllCarsList();
+
+
+    }, [])
+
+
     return (
         <div className='p-10'>
 
@@ -11,30 +31,19 @@ function ListAllCarsComponent(props) {
                     {/* head */}
                     <thead>
                         <tr>
-
-                            {/* <th>
-                                <label>
-                                    <input type="checkbox" className="checkbox" />
-                                </label>
-                            </th> */}
-
                             <th>Name</th>
                             <th>Job</th>
                             <th>Favorite Color</th>
                             <th></th>
                         </tr>
                     </thead>
+
+
                     <tbody>
                         {/* fill this part dynamically with car list  */}
+
                         <tr>
-
-                            {/* <th>
-                                <label>
-                                    <input type="checkbox" className="checkbox" />
-                                </label>
-                            </th> */}
                             <td>
-
                                 <div className="flex items-center space-x-3">
                                     <div className="avatar">
                                         <div className="mask mask-squircle w-16 border-2 border-solid border-neutral-500">
@@ -59,7 +68,10 @@ function ListAllCarsComponent(props) {
                                 <button className="btn btn-ghost btn-xs">details</button>
                             </th>
                         </tr>
+
+
                     </tbody>
+
                     {/* foot */}
                     <tfoot>
                         <tr>
