@@ -9,7 +9,7 @@ function FooterComponent(props) {
     return (
 
 
-        <footer className="footer p-5 bg-neutral text-neutral-content absolute bottom-0 text-xs">
+        <footer className="footer p-5 bg-neutral text-neutral-content fixed bottom-0 text-xs">
             <div className='ml-10'>
                 <FontAwesomeIcon icon={faTruckPickup} bounce style={{ color: "#d4c419", }} size="2xl" />
                 <p>Car Rentals Inc </p>

@@ -1,15 +1,18 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 // import BusImg from '/public/images/bus.jpg';
 import CarService from '../services/CarService';
 
 function ListAllCarsComponent(props) {
 
 
+    const [allCars, setAllCars] = useState([]);
+
     useEffect(() => {
 
         const getAllCarsList = () => {
             CarService.getAllCars().then((response) => {
-                console.log(response.data);
+                // console.log(response.data);
+                setAllCars(response.data);
             }).catch(error => {
                 console.log(error);
             })
@@ -19,7 +22,7 @@ function ListAllCarsComponent(props) {
         getAllCarsList();
 
 
-    }, [])
+    }, [props])
 
 
     return (
@@ -31,54 +34,59 @@ function ListAllCarsComponent(props) {
                     {/* head */}
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Job</th>
-                            <th>Favorite Color</th>
+                            <th>Car</th>
+                            <th>Type</th>
+                            <th>Price/day</th>
                             <th></th>
                         </tr>
                     </thead>
 
 
                     <tbody>
-                        {/* fill this part dynamically with car list  */}
+                        {/* fill this part dynamically with car list, one car object per table row: */}
+                        {allCars.map((car) => {
+                            return (
+                                <tr key={car.id}>
+                                    <td className='min-w-[6rem] max-w-[8rem] whitespace-normal'>
+                                        <div className="flex items-center space-x-6">
+                                            {/* <div className="avatar">
+                                                <div className="mask mask-squircle w-20 border-2 border-solid border-neutral-500">
+                                                    <img src={'/images/' + car.type + '.jpg'} alt="Picture of a random bus" />
+                                                </div>
+                                            </div> */}
+                                            <div className='w-[30%] min-w-[50px]'>
+                                                <figure>
+                                                    <img src={'/images/' + car.type + '.jpg'} alt="Picture of a random bus" className='rounded-lg border border-solid border-[#d4c419]' />
+                                                </figure>
+                                            </div>
 
-                        <tr>
-                            <td>
-                                <div className="flex items-center space-x-3">
-                                    <div className="avatar">
-                                        <div className="mask mask-squircle w-16 border-2 border-solid border-neutral-500">
-                                            <img src='/images/sedan.jpg' alt="Picture of a random bus" />
-
+                                            <div>
+                                                {/* don't display car id in the overview  */}
+                                                <div className="font-semibold"> {car.model.toUpperCase() + " " + car.modelYear}</div>
+                                                <div className="font-semibold opacity-70">
+                                                    <span className="badge badge-ghost badge-sm"> {car.regNr} </span>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div>
-                                        <div className="font-semibold">Car name</div>
-                                        <div className="text-sm opacity-70">type</div>
-                                        <div className="text-sm opacity-70">reg. nr</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                Zemlak, Daniel and Leannon
-                                <br />
-                                <span className="badge badge-ghost badge-sm">Desktop Support Technician</span>
-                            </td>
-                            <td>Purple</td>
-                            <th>
-                                <button className="btn btn-ghost btn-xs">details</button>
-                            </th>
-                        </tr>
-
+                                    </td>
+                                    <td> {car.type} </td>
+                                    <td> {car.dailySek} </td>
+                                    <th>
+                                        <button className="btn btn-ghost btn-xs">details</button>
+                                    </th>
+                                </tr>
+                            )
+                        }
+                        )}
 
                     </tbody>
 
                     {/* foot */}
                     <tfoot>
                         <tr>
-                            {/* <th></th> */}
-                            <th>Name</th>
-                            <th>Job</th>
-                            <th>Favorite Color</th>
+                            <th>Car</th>
+                            <th>Type</th>
+                            <th>Price/day</th>
                             <th></th>
                         </tr>
                     </tfoot>
