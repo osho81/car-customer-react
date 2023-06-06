@@ -24,7 +24,6 @@ function HeaderComponent(props) {
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" /></svg>
                         </label>
                         <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
-                            {/* <li><a>My Profile</a></li> */}
                             <li><Link to="/myinfo">My Profile</Link></li>
                             <li>
                                 <a>Cars</a>
@@ -41,18 +40,19 @@ function HeaderComponent(props) {
                             <li><a>My Orders</a></li>
                         </ul>
                     </div>
-                    <Link to="/" className="btn normal-case text-xl">Car Rental</Link>
+                    <Link to="/" className="btn normal-case text-xl">Car Rentals</Link>
                 </div>
 
                 {/* Top nav bar: */}
                 <div className="navbar-center hidden lg:flex">
                     <ul className="menu menu-horizontal px-1">
-                        {/* <li><a>My Profile</a></li> */}
+                        {/* change a tags into react router links/navlinks */}
                         <li><Link to="/myinfo">My Profile</Link></li>
                         <li tabIndex={0}>
                             <details>
                                 <summary>Cars</summary>
-                                <ul className="p-2">
+                                {/* decrease vertical space between list items: */}
+                                <ul className="flex flex-col space-y-[-10px]">
                                     <li><Link to="/allcars">All Cars</Link></li>
                                     <li><a>Mini</a></li>
                                     <li><a>Sedan</a></li>

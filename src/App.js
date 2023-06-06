@@ -4,6 +4,8 @@ import "tailwindcss/tailwind.css";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import WelcomeComponent from './components/WelcomeComponent';
 import HeaderComponent from './components/HeaderComponent';
+import FooterComponent from './components/FooterComponent';
+import ListAllCarsComponent from './components/ListAllCarsComponent';
 
 
 function App() {
@@ -21,6 +23,8 @@ function App() {
         <Routes>
 
           <Route path="/" element={< WelcomeComponent />}></Route>
+          <Route path="/allcars" element={< ListAllCarsComponent />}></Route>
+          
 
         </Routes>
 
@@ -28,6 +32,7 @@ function App() {
 
 
       {/* Add "permanent" footer component here */}
+      <FooterComponent/>
 
     </Router>
   );
