@@ -6,6 +6,7 @@ import WelcomeComponent from './components/WelcomeComponent';
 import HeaderComponent from './components/HeaderComponent';
 import FooterComponent from './components/FooterComponent';
 import ListAllCarsComponent from './components/ListAllCarsComponent';
+import ViewCarDetailsComponent from './components/ViewCarDetailsComponent ';
 
 
 function App() {
@@ -14,7 +15,7 @@ function App() {
     <Router>
 
       {/* Add "permanent" header component with its navigation bar here */}
-      <HeaderComponent/>
+      <HeaderComponent />
 
       <div className="App">
 
@@ -24,7 +25,7 @@ function App() {
 
           <Route path="/" element={< WelcomeComponent />}></Route>
 
-          {/* No type send in props, i.e. will get all cars: */}
+          {/* Null type as props will get all cars, else type is set as props */}
           <Route path="/allcars" element={< ListAllCarsComponent type={null} />}></Route>
           <Route path="/minicars" element={< ListAllCarsComponent type="mini" />}></Route>
           <Route path="/sedancars" element={< ListAllCarsComponent type="sedan" />}></Route>
@@ -32,7 +33,9 @@ function App() {
           <Route path="/cabcars" element={< ListAllCarsComponent type="cab" />}></Route>
           <Route path="/suvcars" element={< ListAllCarsComponent type="suv" />}></Route>
           <Route path="/buscars" element={< ListAllCarsComponent type="bus" />}></Route>
-          
+
+          {/* No type send in props, i.e. will get all cars: */}
+          <Route path='/car/:id' element={< ViewCarDetailsComponent />}></Route>
 
         </Routes>
 
@@ -40,7 +43,7 @@ function App() {
 
 
       {/* Add "permanent" footer component here */}
-      <FooterComponent/>
+      <FooterComponent />
 
     </Router>
   );

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 // import BusImg from '/public/images/bus.jpg';
 import CarService from '../services/CarService';
+import { useNavigate } from 'react-router-dom';
 
 // In this component, all cars or cars by a specific type can be rendered
 // In car-admin-react, these tasks were done in separate functions
@@ -8,20 +9,15 @@ import CarService from '../services/CarService';
 
 function ListAllCarsComponent(props) {
 
+    // Variables, declarations and updatable states
+    
+    const navigate = useNavigate();
 
     const [carsList, setCarsList] = useState([]);
 
-    useEffect(() => {
 
-        // Function that functions for All Cars only
-        // const getCarsListList = () => {
-        //     CarService.getCarsList().then((response) => {
-        //         // console.log(response.data);
-        //         setCarsList(response.data);
-        //     }).catch(error => {
-        //         console.log(error);
-        //     })
-        // }
+    // Initial loadings
+    useEffect(() => {
 
         // Functions that works for all Cars and Cars By Type
         setCarsList([]); // Empty eventual list
@@ -48,6 +44,19 @@ function ListAllCarsComponent(props) {
     }, [props])
 
 
+
+    // Customized methods 
+
+    const viewCarDetails = async (e) => {
+        const eventCarId = await e.target.id; // Get id from clicked button (event target)
+        navigate(`/car/${eventCarId}`); // Note: backticks
+    }
+
+
+
+
+
+    // Populate fetched data and render it (to screen)
     return (
         <div className='p-10'>
 
@@ -79,7 +88,7 @@ function ListAllCarsComponent(props) {
                                             </div> */}
                                             <div className='w-[30%] min-w-[50px]' style={{zIndex:'-1', position:'relative'}}>
                                                 <figure>
-                                                    <img src={'/images/' + car.type + '.jpg'} alt="Picture of a random bus" className='rounded-lg border border-solid border-[#d4c419]' />
+                                                    <img src={'/images/' + car.type + '.jpg'} alt="Picture of the car" className='rounded-lg border border-solid border-[#d4c419]' />
                                                 </figure>
                                             </div>
 
@@ -95,7 +104,7 @@ function ListAllCarsComponent(props) {
                                     <td> {car.type} </td>
                                     <td> {car.dailySek} </td>
                                     <th>
-                                        <button className="btn btn-ghost btn-xs">details</button>
+                                        <button className="btn btn-ghost btn-xs" id={car.id} onClick={viewCarDetails}>details</button>
                                     </th>
                                 </tr>
                             )
