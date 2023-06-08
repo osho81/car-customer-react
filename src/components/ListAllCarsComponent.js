@@ -24,6 +24,7 @@ function ListAllCarsComponent(props) {
         // }
 
         // Functions that works for all Cars and Cars By Type
+        setCarsList([]); // Empty eventual list
         const getCarsListList = () => {
             CarService.getCarsList().then((response) => {
                 // If no type is specified in props, get all
@@ -76,7 +77,7 @@ function ListAllCarsComponent(props) {
                                                     <img src={'/images/' + car.type + '.jpg'} alt="Picture of a random bus" />
                                                 </div>
                                             </div> */}
-                                            <div className='w-[30%] min-w-[50px]'>
+                                            <div className='w-[30%] min-w-[50px]' style={{zIndex:'-1', position:'relative'}}>
                                                 <figure>
                                                     <img src={'/images/' + car.type + '.jpg'} alt="Picture of a random bus" className='rounded-lg border border-solid border-[#d4c419]' />
                                                 </figure>

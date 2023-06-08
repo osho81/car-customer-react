@@ -25,8 +25,13 @@ function App() {
           <Route path="/" element={< WelcomeComponent />}></Route>
 
           {/* No type send in props, i.e. will get all cars: */}
-          {/* <Route path="/allcars" element={< ListAllCarsComponent type={null} />}></Route> */}
-          <Route path="/allcars" element={< ListAllCarsComponent type="sedan" />}></Route>
+          <Route path="/allcars" element={< ListAllCarsComponent type={null} />}></Route>
+          <Route path="/minicars" element={< ListAllCarsComponent type="mini" />}></Route>
+          <Route path="/sedancars" element={< ListAllCarsComponent type="sedan" />}></Route>
+          <Route path="/sportcars" element={< ListAllCarsComponent type="sport" />}></Route>
+          <Route path="/cabcars" element={< ListAllCarsComponent type="cab" />}></Route>
+          <Route path="/suvcars" element={< ListAllCarsComponent type="suv" />}></Route>
+          <Route path="/buscars" element={< ListAllCarsComponent type="bus" />}></Route>
           
 
         </Routes>
