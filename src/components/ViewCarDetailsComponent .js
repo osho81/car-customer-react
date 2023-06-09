@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import CarService from '../services/CarService';
+import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBackwardStep } from "@fortawesome/free-solid-svg-icons";
 
 function ViewCarDetailsComponent(props) {
 
@@ -8,6 +11,8 @@ function ViewCarDetailsComponent(props) {
     const { id } = useParams();
 
     const [selectedCar, setSelectedCar] = useState("");
+
+    const navigate = useNavigate();
 
     useEffect(() => {
 
@@ -20,12 +25,18 @@ function ViewCarDetailsComponent(props) {
 
         getCarById();
 
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props])
+
+
+    const goBack = () => {
+        navigate(-1); // -1 goes back to previous page
+    }
 
 
     return (
         <div>
-            <div className="card w-[60%] bg-base-100 shadow-xl image-full ml-[20%] mt-[2%]" style={{zIndex:'-1', position:'relative'}}>
+            <div className="card w-[60%] bg-base-100 shadow-xl image-full ml-[20%] mt-[2%]" style={{ zIndex: '-1' }}>
                 <figure>
                     <img src={'/images/' + selectedCar.type + '.jpg'} alt="Picture of the car" />
                 </figure>
@@ -64,11 +75,13 @@ function ViewCarDetailsComponent(props) {
                         </table>
                     </div>
 
-                    <div className="card-actions justify-end">
-                        <button className="btn btn-primary">Edit</button>
-                        <button className="btn btn-primary">BAck</button>
-                    </div>
                 </div>
+            </div>
+            <div className="card-actions mt-[1%] ml-[20%] mr-[20%] flex justify-between">
+                <button className="btn btn-outline back-btn" onClick={goBack} >
+                    <FontAwesomeIcon icon={faBackwardStep} />
+                </button>
+                <button className="btn btn-outline edit-btn">Edit</button>
             </div>
         </div>
     );

@@ -32,7 +32,38 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
+}
+
+.not-clickable-part {
+  cursor: default;
+  pointer-events: none;
+}
+
+.golden-color {
+  color: #d4c419;
+}
+
+.car-detail-btn {
+  opacity: 0.7;
+}
+
+.car-detail-btn:hover {
+  cursor: pointer;
+  opacity: 1;
+}
+
+.back-btn, .edit-btn {
+  width: 10%;
+}
+
+.carlist-tablehead {
+  font-size: 50px !important;
+}
+
+.carlist-car-head {
+  width: 40% !important;
 }

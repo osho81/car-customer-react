@@ -18,7 +18,9 @@ function FooterComponent(props) {
                 <span className="footer-title text-xs">Contact & Social</span>
                 <div className="grid grid-flow-col gap-8 ml-5">
                     <a href="mailto:support@support.com"><FontAwesomeIcon icon={faEnvelope} size="2xl" /></a>
-                    <a href="https://github.com/osho81" className="text-muted" target={'_blank'} rel="noreferrer"><FontAwesomeIcon icon={faGithub} size="2xl" /></a>
+                    <a href="https://github.com/osho81" className="text-muted" target={'_blank'} rel="noreferrer">
+                        <FontAwesomeIcon icon={faGithub} size="2xl" />
+                    </a>
                 </div>
             </div>
         </footer>
