@@ -36,10 +36,14 @@ function App() {
           <Route path="/buscars" element={< ListAllCarsComponent type="bus" />}></Route>
 
           {/* View car details, id as pathvar: */}
-          <Route path='/car/:id' element={< ViewCarDetailsComponent />}></Route>
+          {/* <Route path='/car/:id' element={< ViewCarDetailsComponent />}></Route> */}
 
-          {/* View update car details, id NOT as pathvar, rather id from navigate state: */}
-          <Route path='/updatecar' element={< UpdateCarComponent />}></Route>
+          {/* View car details, id as navigate state (to be able to render next car etc): */}
+          <Route path='/car' element={< ViewCarDetailsComponent />}></Route>
+
+
+          {/* DISABLED: View update car details, id NOT as pathvar, rather id from navigate state: */}
+          {/* <Route path='/updatecar' element={< UpdateCarComponent />}></Route> */}
 
         </Routes>
 

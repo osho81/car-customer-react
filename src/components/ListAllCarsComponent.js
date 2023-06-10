@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 // import BusImg from '/public/images/bus.jpg';
 import CarService from '../services/CarService';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfoCircle, faSortUp, faSortDown } from "@fortawesome/free-solid-svg-icons";
 
@@ -14,6 +14,9 @@ function ListAllCarsComponent(props) { // props includes type from App.js route
     // Variables, declarations and updatable states
 
     const navigate = useNavigate();
+
+    const currentLocation = useLocation();
+    const currentPath = currentLocation.pathname; // Send as state, to optionally return here after car details
 
     const [carsList, setCarsList] = useState([]);
 
@@ -58,7 +61,11 @@ function ListAllCarsComponent(props) { // props includes type from App.js route
 
     const viewCarDetails = async (e) => {
         const eventCarId = await e.target.id; // Get id from clicked button (event target)
-        navigate(`/car/${eventCarId}`); // Note: backticks
+        // navigate(`/car/${eventCarId}`); // Note: backticks
+
+        // Approach with navigate state, instead ofurl pathvar:
+        console.log(currentPath);
+        navigate(`/car`, { state: { id: eventCarId, backpath: currentPath} });
     }
 
     const sortTable = async (e) => {
@@ -234,7 +241,7 @@ function ListAllCarsComponent(props) { // props includes type from App.js route
                                             <div>
                                                 {/* don't display car id in the overview  */}
                                                 <div className="font-semibold"> {car.model.toUpperCase() + " " + car.modelYear}</div>
-                                                <div className="font-semibold opacity-70">
+                                                <div className="font-semibold opacity-70 -ml-2">
                                                     <span className="badge badge-ghost badge-sm"> {car.regNr} </span>
                                                 </div>
                                             </div>
