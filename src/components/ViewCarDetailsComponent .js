@@ -69,6 +69,8 @@ function ViewCarDetailsComponent(props) {
         }).catch(error => {
             console.log(error);
         })
+
+        // Alternatively, use cars list (all cars, mini cars etc) to go through cars
     }
 
     const previousCar = () => {
@@ -91,6 +93,10 @@ function ViewCarDetailsComponent(props) {
         }).catch(error => {
             console.log(error);
         })
+    }
+
+    const orderCar = () => {
+        navigate(`/ordercar`, { state: { id: id }} ); // Go to order form, with this id as state
     }
 
 
@@ -159,8 +165,11 @@ function ViewCarDetailsComponent(props) {
                     </button>
                 </div>
 
+                <button className="btn btn-outline edit-btn" onClick={orderCar}>Rent</button>
+
                 {/* Disabled button, since customer should NOT be able to edit car (only admin) */}
                 {/* <button className="btn btn-outline edit-btn" onClick={openUpdateCarForm}>Edit</button> */}
+             
             </div>
         </div>
     );

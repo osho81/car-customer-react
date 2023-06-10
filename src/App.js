@@ -8,6 +8,7 @@ import FooterComponent from './components/FooterComponent';
 import ListAllCarsComponent from './components/ListAllCarsComponent';
 import ViewCarDetailsComponent from './components/ViewCarDetailsComponent ';
 import UpdateCarComponent from './components/UpdateCarComponent';
+import OrderCarComponent from './components/OrderCarComponent';
 
 
 function App() {
@@ -40,6 +41,8 @@ function App() {
 
           {/* View car details, id as navigate state (to be able to render next car etc): */}
           <Route path='/car' element={< ViewCarDetailsComponent />}></Route>
+
+          <Route path='/ordercar' element={< OrderCarComponent />}></Route>
 
 
           {/* DISABLED: View update car details, id NOT as pathvar, rather id from navigate state: */}
