@@ -7,6 +7,7 @@ import HeaderComponent from './components/HeaderComponent';
 import FooterComponent from './components/FooterComponent';
 import ListAllCarsComponent from './components/ListAllCarsComponent';
 import ViewCarDetailsComponent from './components/ViewCarDetailsComponent ';
+import UpdateCarComponent from './components/UpdateCarComponent';
 
 
 function App() {
@@ -34,8 +35,11 @@ function App() {
           <Route path="/suvcars" element={< ListAllCarsComponent type="suv" />}></Route>
           <Route path="/buscars" element={< ListAllCarsComponent type="bus" />}></Route>
 
-          {/* No type send in props, i.e. will get all cars: */}
+          {/* View car details, id as pathvar: */}
           <Route path='/car/:id' element={< ViewCarDetailsComponent />}></Route>
+
+          {/* View update car details, id NOT as pathvar, rather id from navigate state: */}
+          <Route path='/updatecar' element={< UpdateCarComponent />}></Route>
 
         </Routes>
 

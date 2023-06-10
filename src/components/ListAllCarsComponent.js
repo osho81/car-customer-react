@@ -9,7 +9,7 @@ import { faInfoCircle, faSortUp, faSortDown } from "@fortawesome/free-solid-svg-
 // In car-admin-react, these tasks were done in separate functions
 // For more comments, see car-admin-react 
 
-function ListAllCarsComponent(props) {
+function ListAllCarsComponent(props) { // props includes type from App.js route
 
     // Variables, declarations and updatable states
 
@@ -224,6 +224,7 @@ function ListAllCarsComponent(props) {
                                                     <img src={'/images/' + car.type + '.jpg'} alt="Picture of a random bus" />
                                                 </div>
                                             </div> */}
+                                            {/* // Use figure instead of avatar: */}
                                             <div className='w-[30%] min-w-[50px]' style={{ zIndex: '-1', position: 'relative' }}>
                                                 <figure>
                                                     <img src={'/images/' + car.type + '.jpg'} alt="Picture of the car" className='rounded-lg border border-solid border-[#d4c419]' />
