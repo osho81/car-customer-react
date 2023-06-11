@@ -15,6 +15,16 @@ class CarService {
         return axios.get("http://localhost:9090/api/v1/car/" + carId);
     }
 
+    orderCar(carOrder) {
+        console.log("I am in createOrder");
+        return axios.post("http://localhost:9090/api/v1/ordercar", carOrder);
+    }
+
+    getMyOrders(customer) { // Could work with just the id, but backend requires the object customer
+        console.log("I am in createOrder");
+        return axios.post("http://localhost:9090/api/v1/myorders", customer);
+    }
+
 }
 
 export default new CarService();

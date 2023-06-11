@@ -3,7 +3,11 @@ import { useParams, useLocation } from 'react-router-dom';
 import CarService from '../services/CarService';
 
 
-// UNUSED COMPONENT SINCE CUSTOMER SHOULD NOT BE ABLE TO CHANGE CAR!
+// DISABLED/UNUSED COMPONENT SINCE CUSTOMER SHOULD NOT BE ABLE TO CHANGE CAR!
+// DISABLED/UNUSED COMPONENT SINCE CUSTOMER SHOULD NOT BE ABLE TO CHANGE CAR!
+// DISABLED/UNUSED COMPONENT SINCE CUSTOMER SHOULD NOT BE ABLE TO CHANGE CAR!
+// DISABLED/UNUSED COMPONENT SINCE CUSTOMER SHOULD NOT BE ABLE TO CHANGE CAR!
+// DISABLED/UNUSED COMPONENT SINCE CUSTOMER SHOULD NOT BE ABLE TO CHANGE CAR!
 
 
 function UpdateCarComponent(props) {
@@ -17,7 +21,7 @@ function UpdateCarComponent(props) {
 
     useEffect(() => {
 
-        const getCarById = () => { // Use id extracted from useParams
+        const getCarById = () => { 
             CarService.getCarById(id).then((response) => {
                 setSelectedCar(response.data);
 
@@ -61,29 +65,6 @@ function UpdateCarComponent(props) {
 
                     </div>
 
-
-
-
-
-{/* 
-                    <input
-                        value={selectedCar.regNr}
-                        type="text"
-                        onChange={handleRegNr}
-                    
-                    />
-                    <input
-                        value={selectedCar.dailySek}
-                        type="text"
-                        onChange={handleDailySek}
-                   
-                    />
-                    <input
-                        value={selectedCar.type}
-                        type="text"
-                        onChange={handleType}
-                   
-                    /> */}
 
 
                     <div className="card-actions justify-end">

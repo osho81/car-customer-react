@@ -110,7 +110,7 @@ function ViewCarDetailsComponent(props) {
 
     return (
         <div className='mb-[8%]'>
-            <div className="card w-[50%] bg-base-100 shadow-xl image-full ml-[25%] mt-[2%]" style={{ zIndex: '-1' }}>
+            <div className="card w-[40%] bg-base-100 shadow-xl image-full ml-[30%] mt-[2%]" style={{ zIndex: '-1' }}>
                 <figure>
                     <img src={'/images/' + selectedCar.type + '.jpg'} alt="Picture of the car" />
                 </figure>
@@ -151,7 +151,7 @@ function ViewCarDetailsComponent(props) {
 
                 </div>
             </div>
-            <div className="card-actions mt-[1%] ml-[25%] mr-[25%] flex justify-between">
+            <div className="card-actions mt-[1%] ml-[30%] mr-[30%] flex justify-between">
                 <button className="btn btn-outline back-btn" onClick={goBack} >
                     <FontAwesomeIcon icon={faBackward} />
                 </button>

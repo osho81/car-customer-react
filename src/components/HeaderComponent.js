@@ -3,7 +3,6 @@ import "tailwindcss/tailwind.css";
 import { Link } from 'react-router-dom';
 
 
-
 function HeaderComponent(props) {
     return (
         <div>
@@ -11,7 +10,7 @@ function HeaderComponent(props) {
             <div className="navbar bg-base-200">
 
                 <div className="navbar-start">
-                    <div className="dropdown" style={{zIndex:'3'}}>
+                    <div className="dropdown" style={{ zIndex: '3' }}>
                         {/* Hamburger meny, for smaller screen: */}
                         <label tabIndex={0} className="btn lg:hidden">
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" /></svg>
@@ -45,7 +44,7 @@ function HeaderComponent(props) {
                             <details className='dropdown'>
                                 <summary>Cars</summary>
                                 {/* decrease vertical space between list items: */}
-                                <ul className="flex flex-col space-y-[-5px]" style={{zIndex:'1'}}>
+                                <ul className="flex flex-col space-y-[-5px]" style={{ zIndex: '1' }}>
                                     <li><Link to="/allcars">All Cars</Link></li>
                                     <li><Link to="/minicars">Mini</Link></li>
                                     <li><Link to="/sedancars">Sedan</Link></li>
@@ -56,7 +55,9 @@ function HeaderComponent(props) {
                                 </ul>
                             </details>
                         </li>
-                        <li><a>My Orders</a></li>
+                        <li>
+                            <Link to="/myorders">My Orders</Link>
+                        </li>
                     </ul>
                 </div>
                 <div className="navbar-end">

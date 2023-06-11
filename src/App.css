@@ -47,11 +47,11 @@
   color: #d4c419;
 }
 
-.car-detail-btn {
+.car-detail-btn, .order-detail-btn {
   opacity: 0.7;
 }
 
-.car-detail-btn:hover {
+.car-detail-btn:hover, .order-detail-btn:hover {
   cursor: pointer;
   opacity: 1;
 }

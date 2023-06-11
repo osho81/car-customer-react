@@ -65,7 +65,7 @@ function ListAllCarsComponent(props) { // props includes type from App.js route
 
         // Approach with navigate state, instead ofurl pathvar:
         console.log(currentPath);
-        navigate(`/car`, { state: { id: eventCarId, backpath: currentPath} });
+        navigate(`/car`, { state: { id: eventCarId, backpath: currentPath } });
     }
 
     const sortTable = async (e) => {
