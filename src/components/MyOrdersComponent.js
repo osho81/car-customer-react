@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfoCircle, faSortUp, faSortDown } from "@fortawesome/free-solid-svg-icons";
-import CarService from '../services/CarService';
+import OrderService from '../services/OrderService';
 
 
 // Order object fields from backend (X = don't display in my orders table)
@@ -14,7 +14,7 @@ import CarService from '../services/CarService';
 // customerId  X
 // carId 
 // price
-// numberofDays X 
+// numberOfDays X 
 // priceInEuro X
 
 function MyOrdersComponent(props) {
@@ -31,14 +31,17 @@ function MyOrdersComponent(props) {
     const [carIdArrow, setCarIdArrow] = useState(faSortDown);
     const [priceArrow, setPriceArrow] = useState(faSortDown);
 
+    // Set selected order, to see details for
+    const [selectedOrder, setSelectedOrder] = useState("");
+
 
     useEffect(() => {
 
         const getMyOrders = () => {
             let customer = { id: customerId };
 
-            CarService.getMyOrders(customer).then((response) => {
-                console.log(response.data);
+            OrderService.getMyOrders(customer).then((response) => {
+                // console.log(response.data);
                 setMyOrders(response.data);
             }).catch(error => {
                 console.log(error);
@@ -50,8 +53,42 @@ function MyOrdersComponent(props) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [props])
 
-    const viewOrderDetails = (e) => {
-        console.log("Let order details open in an alert/modal");
+
+    const viewOrderDetails = async (e) => {
+        const selectedOrderId = e.target.id; // Get id of clicked order row
+
+        // Set selected order, matching the order with the selected id
+        const getSelectedOrder = () => {
+            myOrders.map((order) => {
+                if (order.id === Number(selectedOrderId)) {
+                    // setSelectedOrder(order); // set all field from backend 
+
+                    // Get latest price in euro and update order euro price here in frontend
+                    OrderService.getPriceInEuro(order).then((response) => { 
+                        // set euro price in backend
+                        console.log(response.data.order.priceInEuro);
+                        setSelectedOrder(order, { priceInEuro: response.data.order.priceInEuro });
+                    }).catch(error => {
+                        console.log(error);
+                    })
+                }
+            })
+        }
+
+        getSelectedOrder();
+
+
+        // Reload selected order with updated euro price
+        // myOrders.map((order) => {
+        //     if (order.id === Number(selectedOrderId)) {
+        //         setSelectedOrder(order);
+        //     }
+        // })
+
+
+        // Open the dialog/modal using ID.showModal()
+        window.orderDialog.showModal();
+
     }
 
 
@@ -200,7 +237,7 @@ function MyOrdersComponent(props) {
 
 
             <div className="overflow-x-auto">
-                <table className="table">
+                <table className="table table-zebra">
                     {/* head */}
                     <thead className='text-xs sm:text-md'>
                         <tr>
@@ -276,6 +313,70 @@ function MyOrdersComponent(props) {
                 </table>
             </div>
 
+            {/* Dialog box for selected order to see details for: */}
+            <dialog id="orderDialog" className="modal modal-bottom sm:modal-middle">
+                <form method="dialog" className="modal-box">
+
+                    <h2 className="justify-center">Order {selectedOrder.orderNr} details</h2>
+
+                    {/* Render all details from slected car, into a two-column table BODY: */}
+                    <div className="overflow-x-auto text-left">
+                        <table className='table table-zebra text-xs'>
+                            <tbody id='order-details-table'>
+                                <tr>
+                                    <td>Order Id </td>
+                                    <td> {selectedOrder.id} </td>
+                                </tr>
+                                <tr >
+                                    <td>Order number </td>
+                                    <td> {selectedOrder.orderNr} </td>
+                                </tr>
+                                <tr>
+                                    <td>Canceled</td>
+                                    <td> {selectedOrder.canceled == true ? "Yes" : "No"} </td>
+                                </tr>
+                                <tr>
+                                    <td>Order/update time</td>
+                                    <td> {selectedOrder.orderOrUpdateTime} </td>
+                                </tr>
+                                <tr>
+                                    <td>Start</td>
+                                    <td> {selectedOrder.firstRentalDay} </td>
+                                </tr>
+                                <tr>
+                                    <td>Return</td>
+                                    <td> {selectedOrder.lastRentalDay} </td>
+                                </tr>
+                                <tr>
+                                    <td>Number of days</td>
+                                    <td> {selectedOrder.numberOfDays} </td>
+                                </tr>
+                                <tr>
+                                    <td>Customer ID</td>
+                                    <td> {selectedOrder.customerId} </td>
+                                </tr>
+                                <tr>
+                                    <td>Car ID</td>
+                                    <td> {selectedOrder.carId} </td>
+                                </tr>
+                                <tr>
+                                    <td>Price</td>
+                                    <td> {selectedOrder.price} </td>
+                                </tr>
+                                <tr>
+                                    <td>Price in Euro</td>
+                                    <td> {selectedOrder.priceInEuro} </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div className="modal-action">
+                        {/* if there is a button in form, it will close the modal */}
+                        <button className="btn">Close</button>
+                    </div>
+                </form>
+            </dialog>
         </div>
     );
 }

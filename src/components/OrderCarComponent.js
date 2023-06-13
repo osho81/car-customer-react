@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import CarService from '../services/CarService';
+import OrderService from '../services/OrderService';
 
 function OrderCarComponent(props) {
 
@@ -71,16 +72,17 @@ function OrderCarComponent(props) {
 
         // Making sure start day is maximum same date as end day:
         if (startDateAsDateType > endDateAsDateType) {
-            startDateAsDateType = endDate;
+            // startDateAsDateType = endDate;
+            endDateAsDateType = startDateAsDateType;
         }
         // If start has passed (or no start date is chosen), make today start day:
         if (startDateAsDateType < today || startDate == "") {
             startDateAsDateType = today;
         }
         // If end has passed make today start & end day:
-        if (endDateAsDateType < today || startDate == "") {
-            startDateAsDateType = today;
-            endDateAsDateType = today;
+        if (endDateAsDateType < today) {
+            // startDateAsDateType = today;
+            endDateAsDateType = startDateAsDateType;
         }
 
         // Send in all fields (don't use this approach)
@@ -91,7 +93,7 @@ function OrderCarComponent(props) {
         let carOrder = { firstRentalDay: startDateAsDateType, lastRentalDay: endDateAsDateType, customerId: 1, carId: id, price: 0 };
 
 
-        CarService.orderCar(carOrder).then((response) => {
+        OrderService.orderCar(carOrder).then((response) => {
             navigate('/allcars', { replace: true }); // Go to car list overview
         }).catch(error => {
             console.log(error)

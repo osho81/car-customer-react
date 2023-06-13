@@ -176,11 +176,9 @@ function ListAllCarsComponent(props) { // props includes type from App.js route
 
 
 
-
-
     // Populate fetched data and render it (to screen)
     return (
-        <div className='p-0 pt-10 sm:p-10'>
+        <div className='p-0 pt-10 sm:p-10 mb-6'>
 
 
             <div className="overflow-x-auto">
@@ -214,7 +212,7 @@ function ListAllCarsComponent(props) { // props includes type from App.js route
                                     <FontAwesomeIcon icon={dailySekArrow} className="not-clickable-part ml-1" />
                                 </span>
                             </th>
-                            <th></th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
 
@@ -262,12 +260,12 @@ function ListAllCarsComponent(props) { // props includes type from App.js route
                     </tbody>
 
                     {/* foot */}
-                    <tfoot>
+                    <tfoot className='mb-[20%]'>
                         <tr>
                             <th>Car</th>
                             <th>Type</th>
                             <th>Price/day</th>
-                            <th></th>
+                            <th>Actions</th>
                         </tr>
                     </tfoot>
 

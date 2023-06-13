@@ -67,3 +67,7 @@
 .carlist-car-head {
   width: 40% !important;
 }
+
+#order-details-table td {
+  padding: 1%;
+}
