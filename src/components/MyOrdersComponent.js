@@ -54,7 +54,7 @@ function MyOrdersComponent(props) {
     }, [props])
 
 
-    const viewOrderDetails = async (e) => {
+    const viewOrderDetails = (e) => {
         const selectedOrderId = e.target.id; // Get id of clicked order row
 
         // Set selected order, matching the order with the selected id
@@ -64,10 +64,14 @@ function MyOrdersComponent(props) {
                     // setSelectedOrder(order); // set all field from backend 
 
                     // Get latest price in euro and update order euro price here in frontend
-                    OrderService.getPriceInEuro(order).then((response) => { 
+                    OrderService.getPriceInEuro(order).then((response) => {
                         // set euro price in backend
                         console.log(response.data.order.priceInEuro);
-                        setSelectedOrder(order, { priceInEuro: response.data.order.priceInEuro });
+                        // setSelectedOrder(order, { priceInEuro: response.data.order.priceInEuro });
+                        setSelectedOrder(order => ({ 
+                            ...order, // Set the whole body and...
+                            ... { priceInEuro: response.data.order.priceInEuro } // ... update field
+                        }));
                     }).catch(error => {
                         console.log(error);
                     })
@@ -76,6 +80,13 @@ function MyOrdersComponent(props) {
         }
 
         getSelectedOrder();
+
+
+        // TODO: 
+        // Fix so price in euro is called and updated in backend and/or frontend
+        // Make sure it has time to load properly, before presented in modal/dialog
+
+
 
 
         // Reload selected order with updated euro price

@@ -80,7 +80,7 @@ function OrderCarComponent(props) {
             startDateAsDateType = today;
         }
         // If end has passed make today start & end day:
-        if (endDateAsDateType < today) {
+        if (endDateAsDateType < today || endDate == "") {
             // startDateAsDateType = today;
             endDateAsDateType = startDateAsDateType;
         }
