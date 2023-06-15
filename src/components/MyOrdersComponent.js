@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faInfoCircle, faSortUp, faSortDown } from "@fortawesome/free-solid-svg-icons";
+import { faInfoCircle, faTrash, faSortUp, faSortDown } from "@fortawesome/free-solid-svg-icons";
 import OrderService from '../services/OrderService';
 
 
@@ -68,8 +68,10 @@ function MyOrdersComponent(props) {
                 if (order.id === Number(selectedOrderId)) {
                     setSelectedOrder(order); // set backend fields to frontend selectedOrder 
 
+
+                    //-------- EURO PRICE PART -------//
                     // Avoid using external exchange api key, if euro price already fetched
-                    if (order.priceInEuro === 0) { 
+                    if (order.priceInEuro === 0) {
                         // Get latest price in euro and update order euro price here in frontend
                         // The java api endpoint deals with updating price in euro in backend/db
                         // Thus, this is temporary change in frontend, to not wait for backend update
@@ -77,7 +79,7 @@ function MyOrdersComponent(props) {
                             setSelectedOrder(order => ({
                                 ...order, // Set the whole body and...
                                 ... { priceInEuro: response.data.order.priceInEuro } // ... update field
-                            })); 
+                            }));
                             // setSelectedOrder(order, { priceInEuro: response.data.order.priceInEuro });
                         }).catch(error => {
                             console.log(error);
@@ -85,15 +87,18 @@ function MyOrdersComponent(props) {
                     }
                 }
             })
-
-            setMyOrders(response.data);
+            // Re-set the list of orders (optional step in this case):
+            // setMyOrders(response.data);
         }).catch(error => {
             console.log(error);
         })
 
         // Open the dialog/modal using ID.showModal()
         window.orderDialog.showModal();
+    }
 
+
+    const deleteOrder = (e) => {
 
     }
 
@@ -293,8 +298,11 @@ function MyOrdersComponent(props) {
                                     <td> {order.carId} </td>
                                     <td> {order.price} </td>
                                     <td>
-                                        <span className='order-detail-btn' id={order.id} onClick={viewOrderDetails}>
+                                        <span className='order-detail-btn mr-4' id={order.id} onClick={viewOrderDetails}>
                                             <FontAwesomeIcon icon={faInfoCircle} size="2xl" className='not-clickable-part golden-color' />
+                                        </span> 
+                                        <span className='order-delete-btn' id={order.id} onClick={deleteOrder}>
+                                            < FontAwesomeIcon icon={faTrash} size="2xl" className='not-clickable-part golden-color' />
                                         </span>
                                     </td>
                                 </tr>
@@ -346,7 +354,7 @@ function MyOrdersComponent(props) {
                                     <td> {selectedOrder.orderOrUpdateTime} </td>
                                 </tr>
                                 <tr>
-                                    <td>Start</td>
+                                    <td>Pickup</td>
                                     <td> {selectedOrder.firstRentalDay} </td>
                                 </tr>
                                 <tr>
