@@ -39,7 +39,6 @@ function MyOrdersComponent(props) {
 
 
     useEffect(() => {
-        console.log("I am in useEffect");
 
         const getMyOrders = () => {
             let customer = { id: customerId }; // Customer object body with id 
@@ -69,7 +68,7 @@ function MyOrdersComponent(props) {
                 if (order.id === Number(selectedOrderId)) {
                     setSelectedOrder(order); // set backend fields to frontend selectedOrder 
 
-                    // Avoid using external exchange api key, if europ price already fetched
+                    // Avoid using external exchange api key, if euro price already fetched
                     if (order.priceInEuro === 0) { 
                         // Get latest price in euro and update order euro price here in frontend
                         // The java api endpoint deals with updating price in euro in backend/db
