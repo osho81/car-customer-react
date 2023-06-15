@@ -8,13 +8,14 @@ class OrderService {
     }
 
     getMyOrders(customer) { // Could work with just the id, but backend requires the object customer
-        console.log("I am in createOrder");
+        console.log("I am in getMyOrders");
         return axios.post("http://localhost:9090/api/v1/myorders", customer);
     }
 
     getPriceInEuro(order) {
         console.log("I am in getPriceInEuro");
-        return axios.post("http://localhost:9090/api/v1/exchange", order, { headers: { 'Content-Type': 'application/json' } });
+        // return axios.post("http://localhost:9090/api/v1/exchange", order);
+        return axios.post("http://localhost:9090/api/v1/exchange", order, { headers:{"Content-Type" : "application/json" }});
     }
 
 }

@@ -29,7 +29,9 @@ function HeaderComponent(props) {
                                     <li><Link to="/buscars">Bus</Link></li>
                                 </ul>
                             </li>
-                            <li><a>My Orders</a></li>
+                            <li>
+                                <Link to="/myorders">My Orders</Link>
+                            </li>
                         </ul>
                     </div>
                     <Link to="/" className="btn normal-case text-xl">Car Rentals</Link>

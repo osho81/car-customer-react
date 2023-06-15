@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfoCircle, faSortUp, faSortDown } from "@fortawesome/free-solid-svg-icons";
 import OrderService from '../services/OrderService';
@@ -19,6 +20,8 @@ import OrderService from '../services/OrderService';
 
 function MyOrdersComponent(props) {
 
+    const navigate = useNavigate();
+
     // Hardcode (logged in) customer id, until implemented keycloak token
     const [customerId, setCutomerId] = useState(1);
 
@@ -36,9 +39,10 @@ function MyOrdersComponent(props) {
 
 
     useEffect(() => {
+        console.log("I am in useEffect");
 
         const getMyOrders = () => {
-            let customer = { id: customerId };
+            let customer = { id: customerId }; // Customer object body with id 
 
             OrderService.getMyOrders(customer).then((response) => {
                 // console.log(response.data);
@@ -57,48 +61,40 @@ function MyOrdersComponent(props) {
     const viewOrderDetails = (e) => {
         const selectedOrderId = e.target.id; // Get id of clicked order row
 
-        // Set selected order, matching the order with the selected id
-        const getSelectedOrder = () => {
-            myOrders.map((order) => {
+        // // Reload updated myOrders
+        let customer = { id: customerId };
+        OrderService.getMyOrders(customer).then((response) => {
+            response.data.map((order) => {
+                // Match order id with selectedOrderId
                 if (order.id === Number(selectedOrderId)) {
-                    // setSelectedOrder(order); // set all field from backend 
+                    setSelectedOrder(order); // set backend fields to frontend selectedOrder 
 
-                    // Get latest price in euro and update order euro price here in frontend
-                    OrderService.getPriceInEuro(order).then((response) => {
-                        // set euro price in backend
-                        console.log(response.data.order.priceInEuro);
-                        // setSelectedOrder(order, { priceInEuro: response.data.order.priceInEuro });
-                        setSelectedOrder(order => ({ 
-                            ...order, // Set the whole body and...
-                            ... { priceInEuro: response.data.order.priceInEuro } // ... update field
-                        }));
-                    }).catch(error => {
-                        console.log(error);
-                    })
+                    // Avoid using external exchange api key, if europ price already fetched
+                    if (order.priceInEuro === 0) { 
+                        // Get latest price in euro and update order euro price here in frontend
+                        // The java api endpoint deals with updating price in euro in backend/db
+                        // Thus, this is temporary change in frontend, to not wait for backend update
+                        OrderService.getPriceInEuro(order).then((response) => {
+                            setSelectedOrder(order => ({
+                                ...order, // Set the whole body and...
+                                ... { priceInEuro: response.data.order.priceInEuro } // ... update field
+                            })); 
+                            // setSelectedOrder(order, { priceInEuro: response.data.order.priceInEuro });
+                        }).catch(error => {
+                            console.log(error);
+                        })
+                    }
                 }
             })
-        }
 
-        getSelectedOrder();
-
-
-        // TODO: 
-        // Fix so price in euro is called and updated in backend and/or frontend
-        // Make sure it has time to load properly, before presented in modal/dialog
-
-
-
-
-        // Reload selected order with updated euro price
-        // myOrders.map((order) => {
-        //     if (order.id === Number(selectedOrderId)) {
-        //         setSelectedOrder(order);
-        //     }
-        // })
-
+            setMyOrders(response.data);
+        }).catch(error => {
+            console.log(error);
+        })
 
         // Open the dialog/modal using ID.showModal()
         window.orderDialog.showModal();
+
 
     }
 
