@@ -12,10 +12,20 @@ class OrderService {
         return axios.post("http://localhost:9090/api/v1/myorders", customer);
     }
 
-    getPriceInEuro(order) {
+    getPriceInEuro(order) { // "Get".., means in this case, to update backend with price in euro 
         console.log("I am in getPriceInEuro");
         // return axios.post("http://localhost:9090/api/v1/exchange", order);
         return axios.post("http://localhost:9090/api/v1/exchange", order, { headers:{"Content-Type" : "application/json" }});
+    }
+
+    cancelOrder(order) { // In this case, it is rather cancel, than delete
+        console.log("I am in deleteOrder");
+        return axios.put("http://localhost:9090/api/v1/cancelorder", order);
+    }
+
+    updateOrder(order) {
+        console.log("I am in updateOrder");
+        return axios.put("http://localhost:9090/api/v1/updateorder", order);
     }
 
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faInfoCircle, faTrash, faSortUp, faSortDown } from "@fortawesome/free-solid-svg-icons";
+import { faInfoCircle, faPenToSquare, faTrash, faSortUp, faSortDown } from "@fortawesome/free-solid-svg-icons";
 import OrderService from '../services/OrderService';
 
 
@@ -25,7 +25,7 @@ function MyOrdersComponent(props) {
     // Hardcode (logged in) customer id, until implemented keycloak token
     const [customerId, setCutomerId] = useState(1);
 
-    const [myOrders, setMyOrders] = useState([]); // initialize with empty array
+    const [myOrders, setMyOrders] = useState([]); // displayize with empty array
 
     // Sorting related variables
     const [orderNrArrow, setOrderNrArrow] = useState(faSortDown);
@@ -36,6 +36,20 @@ function MyOrdersComponent(props) {
 
     // Set selected order, to see details for
     const [selectedOrder, setSelectedOrder] = useState("");
+
+
+    // Variables used for edit order form dialog (not necessary, but easier to follow)
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
+
+    // Checkbox for cancel/UN-cancel
+    const [cancelChoice, setCancelChoice] = useState(); // boolean for cancel choice 
+    const [checkChoice, setCheckChoice] = useState(false); // boolean for current check mark
+
+
+    // Dates to display as placeholder for date picker
+    const [displayStartDate, setDisplayStartDate] = useState("");
+    const [displayEndDate, setDisplayEndDate] = useState("");
 
 
     useEffect(() => {
@@ -98,9 +112,132 @@ function MyOrdersComponent(props) {
     }
 
 
-    const deleteOrder = (e) => {
+    // In this case, it is rather cancel, than delete
+    const cancelOrder = (e) => {
+        const selectedOrderId = e.target.id; // Get id of clicked order row
+
+        myOrders.map((order) => {
+            if (order.id === Number(selectedOrderId)) {
+                OrderService.cancelOrder(order).then((response) => {
+                    console.log("deleted order: ", response.data);
+                }).catch(error => {
+                    console.log(error);
+                })
+            }
+        })
+
+        window.location.reload();
+    }
+
+    const editOrderForm = (e) => {
+        const selectedOrderId = e.target.id;
+
+        myOrders.map((order) => {
+            if (order.id === Number(selectedOrderId)) {
+                setSelectedOrder(order);
+                setDisplayStartDate(order.firstRentalDay); // Date values to display
+                setDisplayEndDate(order.lastRentalDay);
+                // setCheckChoice(false); // Always start unchecked
+                setCancelChoice(Boolean(order.canceled));
+            }
+        })
+
+        window.editOrderDialog.showModal();
 
     }
+
+    const handleCheck = (e) => {
+        // Change check status when clicked
+        const cancelBoolean = new Boolean(e.target.checked === true ? false : true);
+        setCheckChoice(cancelBoolean);
+
+        // Set uncancel if is canceled, and vice versa
+        // setCancelChoice(e.target.checked === true && selectedOrder.canceled === true ? false : true);
+        if (selectedOrder.canceled && e.target.checked === true) {
+            setCancelChoice(false); // Uncancel, if is canceled (true) & cancel box is checked
+        }
+        if (!selectedOrder.canceled && e.target.checked === true) {
+            setCancelChoice(true); //Cancel, if is NOT canceled (false) & cancel box is checked
+        } 
+        // Else, leave as is
+    }
+
+
+    const handleStartDate = (e) => {
+        const start = e.target.value;
+        let startString = start.toString();
+        setStartDate(startString); // Date value to actually edit with
+
+        // Display in date picker
+        setDisplayStartDate(e.target.value);
+    }
+
+    const handleEndDate = (e) => {
+        const end = e.target.value;
+        let endString = end.toString();
+        setEndDate(endString); // Date value to actually edit with
+
+        // Display in date picker
+        setDisplayEndDate(e.target.value);
+    }
+
+    const submitEditOrder = (e) => {
+        console.log("I am in submit edit order");
+
+        const selectedOrderId = e.target.id;
+
+        myOrders.map((order) => {
+            if (order.id === Number(selectedOrderId)) {
+                console.log("I found order", order);
+
+                // When order is found, fix logic then send to update order backend endpoint
+
+                // Fix rental date logic
+                let startDateAsDateType = new Date(startDate); // Make dates comparable & reassignable
+                let endDateAsDateType = new Date(endDate);
+                let today = new Date();
+                today.setDate(today.getDate());
+
+                // Making sure start day is maximum same date as end day:
+                if (startDateAsDateType > endDateAsDateType) {
+                    // startDateAsDateType = endDate;
+                    endDateAsDateType = startDateAsDateType;
+                }
+                // If start has passed (or no start date is chosen), make today start day:
+                if (startDateAsDateType < today || startDate == "") {
+                    startDateAsDateType = today;
+                }
+                // If end has passed make today start & end day:
+                if (endDateAsDateType < today || endDate == "") {
+                    // startDateAsDateType = today;
+                    endDateAsDateType = startDateAsDateType;
+                }
+
+                // If canceled is unchanged, keep same value, else use new value
+                // Logic of this is set in handleCheck function
+
+
+                // Send in wihtout null values; java backend interpretes is as null
+                // Since this is an update, also send order id
+                // For UNchangable fields, send order current fields (carId etc), or null (price etc))
+                let orderToUpdate = {
+                    id: selectedOrderId, canceled: cancelChoice, 
+                    firstRentalDay: startDateAsDateType, lastRentalDay: endDateAsDateType, customerId: 1, carId: order.carId
+                };
+
+
+                OrderService.updateOrder(orderToUpdate).then((response) => {
+                    console.log("Updated order: ", response.data);
+                }).catch(error => {
+                    console.log(error);
+                })
+
+            }
+        })
+
+        window.location.reload();
+    }
+
 
 
     const sortTable = async (e) => {
@@ -243,6 +380,7 @@ function MyOrdersComponent(props) {
 
     }
 
+
     return (
         <div className='p-0 pt-10 sm:p-5'>
 
@@ -273,13 +411,13 @@ function MyOrdersComponent(props) {
                             <th>
                                 <span id='carId' onClick={sortTable}>
                                     Car ID
-                                    <FontAwesomeIcon icon={lastRentalDayArrow} className="not-clickable-part ml-1" />
+                                    <FontAwesomeIcon icon={carIdArrow} className="not-clickable-part ml-1" />
                                 </span>
                             </th>
                             <th>
                                 <span id='price' onClick={sortTable}>
                                     Price
-                                    <FontAwesomeIcon icon={lastRentalDayArrow} className="not-clickable-part ml-1" />
+                                    <FontAwesomeIcon icon={priceArrow} className="not-clickable-part ml-1" />
                                 </span>
                             </th>
                             <th>Actions</th>
@@ -291,7 +429,8 @@ function MyOrdersComponent(props) {
                         {/* fill this part dynamically with car list, one car object per table row: */}
                         {myOrders.map((order) => {
                             return (
-                                <tr key={order.id}>
+                                // If canceled order, line-through order row: 
+                                <tr key={order.id} className={order.canceled === true ? "line-through" : ""}>
                                     <td> {order.orderNr} </td>
                                     <td> {order.firstRentalDay} </td>
                                     <td> {order.lastRentalDay} </td>
@@ -299,10 +438,15 @@ function MyOrdersComponent(props) {
                                     <td> {order.price} </td>
                                     <td>
                                         <span className='order-detail-btn mr-4' id={order.id} onClick={viewOrderDetails}>
-                                            <FontAwesomeIcon icon={faInfoCircle} size="2xl" className='not-clickable-part golden-color' />
-                                        </span> 
-                                        <span className='order-delete-btn' id={order.id} onClick={deleteOrder}>
-                                            < FontAwesomeIcon icon={faTrash} size="2xl" className='not-clickable-part golden-color' />
+                                            <FontAwesomeIcon icon={faInfoCircle} size="xl" className='not-clickable-part golden-color' />
+                                        </span>
+                                        <span className='order-update-btn mr-4' id={order.id} onClick={editOrderForm}>
+                                            < FontAwesomeIcon icon={faPenToSquare} size="xl" className='not-clickable-part edit-color' />
+                                        </span>
+                                        {/* Show cancel button only if not canceled yet: */}
+                                        <span className={order.canceled === true ? "order-delete-btn invisible" : "order-delete-btn visible"}
+                                            id={order.id} onClick={cancelOrder}>
+                                            < FontAwesomeIcon icon={faTrash} size="xl" className='not-clickable-part warning-color' />
                                         </span>
                                     </td>
                                 </tr>
@@ -326,6 +470,7 @@ function MyOrdersComponent(props) {
 
                 </table>
             </div>
+
 
             {/* Dialog box for selected order to see details for: */}
             <dialog id="orderDialog" className="modal modal-bottom sm:modal-middle">
@@ -391,6 +536,53 @@ function MyOrdersComponent(props) {
                     </div>
                 </form>
             </dialog>
+
+
+
+            {/* Dialog form for selected order to update order: */}
+            <dialog id="editOrderDialog" className="modal modal-bottom sm:modal-middle justify-center">
+                <form method="dialog" className="modal-box font-semibold">
+
+                    <h2 className="justify-center">Edit order {selectedOrder.orderNr}</h2>
+
+                    {/* Render all details from slected car, into a form inputsY: */}
+                    <div className="form-control w-full max-w-xs mt-6 space-y-2">
+
+                        <input disabled type="text" placeholder={"Customer id: \t" + selectedOrder.customerId} className="input input-sm input-bordered w-full max-w-xs font-bold" />
+                        <input disabled type="text" placeholder={"Car id: \t\t\t" + selectedOrder.carId} className="input input-sm input-bordered w-full max-w-xs font-bold" />
+
+                        {/* Keep cancel as is or cancel/UN-cancel: */}
+                        <div className="form-control">
+                            <label className="cursor-pointer label">
+                                <span className="label-text">{selectedOrder.canceled === true ? "UN-cancel? " : "Cancel? "}</span>
+                                <input type="checkbox" checked={checkChoice}
+                                    // value={checkChoice}
+                                    className="checkbox checkbox-warning" onChange={handleCheck} />
+                            </label>
+                        </div>
+
+                        {/* Date picker (type='date'); value displayes current & default value */}
+                        <label className="label">
+                            <span className="label-text text-sm font-semibold">Pickup date: </span>
+                        </label>
+                        <input type="date" value={displayStartDate} onChange={handleStartDate} className="input input-sm input-bordered w-full max-w-xs" />
+
+                        <label className="label">
+                            <span className="label-text text-sm font-semibold">Return date: </span>
+                        </label>
+                        <input type="date" value={displayEndDate} onChange={handleEndDate} className="input input-sm input-bordered w-full max-w-xs" />
+
+                    </div>
+
+                    <div className="flex justify-center items-center p-5">
+                        {/* if there is a button in form, it will close the modal */}
+                        <button className="btn mr-4">Cancel</button>
+                        <button id={selectedOrder.id} className="btn btn-outline" onClick={submitEditOrder}>Edit</button>
+                    </div>
+                </form>
+            </dialog>
+
+
         </div>
     );
 }
