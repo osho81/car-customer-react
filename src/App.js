@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import WelcomeComponent from './components/WelcomeComponent';
 import HeaderComponent from './components/HeaderComponent';
 import FooterComponent from './components/FooterComponent';
+import CustomerInfoComponent from './components/CustomerInfoComponent';
 import ListAllCarsComponent from './components/ListAllCarsComponent';
 import ViewCarDetailsComponent from './components/ViewCarDetailsComponent ';
 // import UpdateCarComponent from './components/UpdateCarComponent';
@@ -33,7 +34,7 @@ function App() {
   }
 
   return (
-    
+
     <div>
 
       <ReactKeycloakProvider
@@ -56,6 +57,8 @@ function App() {
             <Routes>
 
               <Route path="/" element={< WelcomeComponent />}></Route>
+
+              <Route path='/myinfo' element={< CustomerInfoComponent />}></Route>
 
               {/* Null type as props will get all cars, else type is set as props */}
               <Route path="/allcars" element={< ListAllCarsComponent type={null} />}></Route>
