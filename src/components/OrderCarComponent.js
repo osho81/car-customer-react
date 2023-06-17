@@ -3,8 +3,11 @@ import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import CarService from '../services/CarService';
 import OrderService from '../services/OrderService';
+import { useKeycloak } from '@react-keycloak/web';
 
 function OrderCarComponent(props) {
+
+    const {keycloak, initialized} = useKeycloak() 
 
     const navigate = useNavigate();
 
@@ -23,7 +26,7 @@ function OrderCarComponent(props) {
 
         // Get car that is about to be ordered
         const getCarById = () => { // Use extracted id
-            CarService.getCarById(id).then((response) => {
+            CarService.getCarById(id, keycloak.token).then((response) => {
                 setSelectedCar(response.data);
 
 
@@ -93,7 +96,7 @@ function OrderCarComponent(props) {
         let carOrder = { firstRentalDay: startDateAsDateType, lastRentalDay: endDateAsDateType, customerId: 1, carId: id, price: 0 };
 
 
-        OrderService.orderCar(carOrder).then((response) => {
+        OrderService.orderCar(carOrder, keycloak.token).then((response) => {
             navigate('/allcars', { replace: true }); // Go to car list overview
         }).catch(error => {
             console.log(error)

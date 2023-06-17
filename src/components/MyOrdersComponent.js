@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfoCircle, faPenToSquare, faTrash, faSortUp, faSortDown } from "@fortawesome/free-solid-svg-icons";
 import OrderService from '../services/OrderService';
+import { useKeycloak } from '@react-keycloak/web';
 
 
 // Order object fields from backend (X = don't display in my orders table)
@@ -20,10 +21,12 @@ import OrderService from '../services/OrderService';
 
 function MyOrdersComponent(props) {
 
+    const { keycloak, initialized } = useKeycloak()
+
     const navigate = useNavigate();
 
-    // Hardcode (logged in) customer id, until implemented keycloak token
-    const [customerId, setCutomerId] = useState(1);
+    // const [customerId, setCustomerId] = useState(); // Skip customer id
+    const [customerEmail, setCustomerEmail] = useState(""); // use keycloak email
 
     const [myOrders, setMyOrders] = useState([]); // displayize with empty array
 
@@ -44,39 +47,48 @@ function MyOrdersComponent(props) {
 
     // Checkbox for cancel/UN-cancel
     const [cancelChoice, setCancelChoice] = useState(); // boolean for cancel choice 
-    const [checkChoice, setCheckChoice] = useState(false); // boolean for current check mark
+    const [checkChoice, setCheckChoice] = useState(false); // boolean for current check mark, start empty/unchecked
 
 
     // Dates to display as placeholder for date picker
     const [displayStartDate, setDisplayStartDate] = useState("");
     const [displayEndDate, setDisplayEndDate] = useState("");
 
+    // const [isLoading, setIsLoading] = useState(true)
+
 
     useEffect(() => {
 
-        const getMyOrders = () => {
-            let customer = { id: customerId }; // Customer object body with id 
+        if (initialized) {
 
-            OrderService.getMyOrders(customer).then((response) => {
-                // console.log(response.data);
-                setMyOrders(response.data);
-            }).catch(error => {
-                console.log(error);
-            })
+            // setCustomerEmail(keycloak.tokenParsed.email); // Not needed
+            const getMyOrders = () => {
+                let customer = { email: (keycloak.tokenParsed.email) }; // Customer object body with only email field
+
+                OrderService.getMyOrders(customer, keycloak.token).then((response) => {
+                    // console.log(response.data);
+                    setMyOrders(response.data);
+                    // setIsLoading(false);
+                }).catch(error => {
+                    console.log(error);
+                })
+            }
+
+            getMyOrders();
+
         }
 
-        getMyOrders();
-
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props])
+    }, [myOrders]) // If myOrders state changed, triggers useEffect 
 
 
     const viewOrderDetails = (e) => {
         const selectedOrderId = e.target.id; // Get id of clicked order row
 
         // // Reload updated myOrders
-        let customer = { id: customerId };
-        OrderService.getMyOrders(customer).then((response) => {
+        // let customer = { id: customerId, email: customerEmail };
+        let customer = { email: keycloak.tokenParsed.email }; // Object with only email field 
+        OrderService.getMyOrders(customer, keycloak.token).then((response) => {
             response.data.map((order) => {
                 // Match order id with selectedOrderId
                 if (order.id === Number(selectedOrderId)) {
@@ -89,7 +101,7 @@ function MyOrdersComponent(props) {
                         // Get latest price in euro and update order euro price here in frontend
                         // The java api endpoint deals with updating price in euro in backend/db
                         // Thus, this is temporary change in frontend, to not wait for backend update
-                        OrderService.getPriceInEuro(order).then((response) => {
+                        OrderService.getPriceInEuro(order, keycloak.token).then((response) => {
                             setSelectedOrder(order => ({
                                 ...order, // Set the whole body and...
                                 ... { priceInEuro: response.data.order.priceInEuro } // ... update field
@@ -118,7 +130,7 @@ function MyOrdersComponent(props) {
 
         myOrders.map((order) => {
             if (order.id === Number(selectedOrderId)) {
-                OrderService.cancelOrder(order).then((response) => {
+                OrderService.cancelOrder(order, keycloak.token).then((response) => {
                     console.log("deleted order: ", response.data);
                 }).catch(error => {
                     console.log(error);
@@ -126,7 +138,16 @@ function MyOrdersComponent(props) {
             }
         })
 
-        window.location.reload();
+        // window.location.reload(); // Avoid reloading page
+
+        // Update myOrder state, to reload useEffect
+        let customer = { email: (keycloak.tokenParsed.email) }; // Customer object body with only email field
+        OrderService.getMyOrders(customer, keycloak.token).then((response) => {
+            setMyOrders(response.data);
+        }).catch(error => {
+            console.log(error);
+        })
+
     }
 
     const editOrderForm = (e) => {
@@ -137,7 +158,7 @@ function MyOrdersComponent(props) {
                 setSelectedOrder(order);
                 setDisplayStartDate(order.firstRentalDay); // Date values to display
                 setDisplayEndDate(order.lastRentalDay);
-                // setCheckChoice(false); // Always start unchecked
+                // setCheckChoice(false); 
                 setCancelChoice(Boolean(order.canceled));
             }
         })
@@ -147,19 +168,18 @@ function MyOrdersComponent(props) {
     }
 
     const handleCheck = (e) => {
-        // Change check status when clicked
-        const cancelBoolean = new Boolean(e.target.checked === true ? false : true);
-        setCheckChoice(cancelBoolean);
-
         // Set uncancel if is canceled, and vice versa
-        // setCancelChoice(e.target.checked === true && selectedOrder.canceled === true ? false : true);
         if (selectedOrder.canceled && e.target.checked === true) {
             setCancelChoice(false); // Uncancel, if is canceled (true) & cancel box is checked
+            setCheckChoice(true); // show checkbox as checked
         }
         if (!selectedOrder.canceled && e.target.checked === true) {
             setCancelChoice(true); //Cancel, if is NOT canceled (false) & cancel box is checked
-        } 
-        // Else, leave as is
+            setCheckChoice(true); // show checkbox as checked
+        }
+        if (e.target.checked === false) {
+            setCheckChoice(false); // show checkbox as UNchecked/empty
+        }
     }
 
 
@@ -182,8 +202,6 @@ function MyOrdersComponent(props) {
     }
 
     const submitEditOrder = (e) => {
-        console.log("I am in submit edit order");
-
         const selectedOrderId = e.target.id;
 
         myOrders.map((order) => {
@@ -221,12 +239,14 @@ function MyOrdersComponent(props) {
                 // Since this is an update, also send order id
                 // For UNchangable fields, send order current fields (carId etc), or null (price etc))
                 let orderToUpdate = {
-                    id: selectedOrderId, canceled: cancelChoice, 
-                    firstRentalDay: startDateAsDateType, lastRentalDay: endDateAsDateType, customerId: 1, carId: order.carId
+                    id: selectedOrderId, canceled: cancelChoice,
+                    firstRentalDay: startDateAsDateType, lastRentalDay: endDateAsDateType, carId: order.carId
                 };
 
+                console.log(selectedOrder);
 
-                OrderService.updateOrder(orderToUpdate).then((response) => {
+
+                OrderService.updateOrder(orderToUpdate, keycloak.token).then((response) => {
                     console.log("Updated order: ", response.data);
                 }).catch(error => {
                     console.log(error);
@@ -235,7 +255,17 @@ function MyOrdersComponent(props) {
             }
         })
 
-        window.location.reload();
+        setCheckChoice(false); // Check should be empty again (since uncancel/cancel string changes)
+
+        // window.location.reload(); // Avoid reloading page
+
+        // Update myOrder state, to reload useEffect
+        let customer = { email: (keycloak.tokenParsed.email) }; // Customer object body with only email field
+        OrderService.getMyOrders(customer, keycloak.token).then((response) => {
+            setMyOrders(response.data);
+        }).catch(error => {
+            console.log(error);
+        })
     }
 
 
@@ -554,8 +584,12 @@ function MyOrdersComponent(props) {
                         {/* Keep cancel as is or cancel/UN-cancel: */}
                         <div className="form-control">
                             <label className="cursor-pointer label">
-                                <span className="label-text">{selectedOrder.canceled === true ? "UN-cancel? " : "Cancel? "}</span>
-                                <input type="checkbox" checked={checkChoice}
+                                <span className="label-text">{selectedOrder.canceled === true ? "Uncancel? " : "Cancel? "}</span>
+                                <input type="checkbox" 
+                                    checked={checkChoice}
+                                    // checked={false}
+                                    // checked={cancelChoice}
+                                    // checked="checked"
                                     // value={checkChoice}
                                     className="checkbox checkbox-warning" onChange={handleCheck} />
                             </label>
@@ -584,6 +618,7 @@ function MyOrdersComponent(props) {
 
 
         </div>
+
     );
 }
 

@@ -4,8 +4,12 @@ import CarService from '../services/CarService';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBackward, faBackwardStep, faForwardStep } from "@fortawesome/free-solid-svg-icons";
+import { useKeycloak } from '@react-keycloak/web';
+
 
 function ViewCarDetailsComponent(props) {
+
+    const {keycloak, initialized} = useKeycloak() 
 
     // id param (i.e. eventCarId from button click navigated to here)
     // const { id } = useParams(); // If get id from url path var
@@ -22,7 +26,7 @@ function ViewCarDetailsComponent(props) {
     useEffect(() => {
 
         const getCarById = () => { // Use id extracted from useParams
-            CarService.getCarById(id).then((response) => {
+            CarService.getCarById(id, keycloak.token).then((response) => {
                 console.log(response.data);
                 setSelectedCar(response.data);
             }).catch(error => {
@@ -50,17 +54,17 @@ function ViewCarDetailsComponent(props) {
         // navigate(`/car/${nextCarId}`);  // Go to car with this id + 1
 
         let nextCarId;
-        CarService.getCarsList().then((response) => {
+        CarService.getCarsList(keycloak.token).then((response) => {
             if (response.data.length <= Number(id)) {
                 nextCarId = 1; // restart from first car, if at last car
-                CarService.getCarById(nextCarId).then((response) => {
+                CarService.getCarById(nextCarId, keycloak.token).then((response) => {
                     setSelectedCar(response.data); // Set new car to render
                 })
                 navigate(`/car`, { state: { id: nextCarId, backpath: backpath } });
             } else {
                 nextCarId = (Number(id) + 1);
                 // Use navigate state, instead of url pathvar:
-                CarService.getCarById(nextCarId).then((response) => {
+                CarService.getCarById(nextCarId, keycloak.token).then((response) => {
                     setSelectedCar(response.data); // Set new car to render
                 })
                 // Rerender this component with new car; re-save backpath (to /allcars, /minicars etc)
@@ -75,17 +79,17 @@ function ViewCarDetailsComponent(props) {
 
     const previousCar = () => {
         let previousCarId;
-        CarService.getCarsList().then((response) => {
+        CarService.getCarsList(keycloak.token).then((response) => {
             console.log(response.data.length);
             if (Number(id) <= 1) {
                 previousCarId = response.data.length; // restart from last car, if at first car
-                CarService.getCarById(previousCarId).then((response) => {
+                CarService.getCarById(previousCarId, keycloak.token).then((response) => {
                     setSelectedCar(response.data);
                 })
                 navigate(`/car`, { state: { id: previousCarId, backpath: backpath } });
             } else {
                 previousCarId = (Number(id) - 1);
-                CarService.getCarById(previousCarId).then((response) => {
+                CarService.getCarById(previousCarId, keycloak.token).then((response) => {
                     setSelectedCar(response.data);
                 })
                 navigate(`/car`, { state: { id: previousCarId, backpath: backpath } });

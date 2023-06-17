@@ -4,6 +4,7 @@ import CarService from '../services/CarService';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfoCircle, faSortUp, faSortDown } from "@fortawesome/free-solid-svg-icons";
+import { useKeycloak } from '@react-keycloak/web';
 
 // In this component, all cars or cars by a specific type can be rendered
 // In car-admin-react, these tasks were done in separate functions
@@ -12,6 +13,8 @@ import { faInfoCircle, faSortUp, faSortDown } from "@fortawesome/free-solid-svg-
 function ListAllCarsComponent(props) { // props includes type from App.js route
 
     // Variables, declarations and updatable states
+
+    const {keycloak, initialized} = useKeycloak() 
 
     const navigate = useNavigate();
 
@@ -34,7 +37,7 @@ function ListAllCarsComponent(props) { // props includes type from App.js route
         // Functions that works for all Cars and Cars By Type
         setCarsList([]); // Empty eventual list
         const getCarsListList = () => {
-            CarService.getCarsList().then((response) => {
+            CarService.getCarsList(keycloak.token).then((response) => {
                 // If no type is specified in props, get all
                 if (props.type === null) {
                     setCarsList(response.data);
@@ -63,7 +66,7 @@ function ListAllCarsComponent(props) { // props includes type from App.js route
         const eventCarId = await e.target.id; // Get id from clicked button (event target)
         // navigate(`/car/${eventCarId}`); // Note: backticks
 
-        // Approach with navigate state, instead ofurl pathvar:
+        // Approach with navigate state, instead of url pathvar:
         console.log(currentPath);
         navigate(`/car`, { state: { id: eventCarId, backpath: currentPath } });
     }

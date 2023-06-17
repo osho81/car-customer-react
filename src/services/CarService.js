@@ -3,14 +3,18 @@ import axios from "axios";
 // Functions communicating with backend springBoot rest api endpoints
 class CarService {
 
-    getCarsList() { 
-        console.log("I am in getAllCars");
-        return axios.get("http://localhost:9090/api/v1/cars");
+    getCarsList(bearerToken) { 
+        const config = {
+            headers: { Authorization: `Bearer ${bearerToken}` }
+        };
+        return axios.get("http://localhost:9090/api/v1/cars", config);
     }
 
-    getCarById(carId) {
-        console.log("I am in getById");
-        return axios.get("http://localhost:9090/api/v1/car/" + carId);
+    getCarById(carId, bearerToken) {
+        const config = {
+            headers: { Authorization: `Bearer ${bearerToken}` }
+        };
+        return axios.get("http://localhost:9090/api/v1/car/" + carId, config);
     }
 
 }
